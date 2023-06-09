@@ -2,19 +2,48 @@ package data
 
 import (
 	"database/sql"
+	"todo-list-api/infra/config"
 
 	"github.com/go-sql-driver/mysql"
 )
 
-func InitDB() (db *sql.DB, err error) {
-	config := mysql.NewConfig()
+type connection struct {
+	db *sql.DB
+}
 
-	config.Addr = "localhost::3306"
-	config.DBName = "todolist"
-	config.User = "root"
-	config.Passwd = "W3Fm7NpSmhwDqo"
+type CnnMask interface {
+	ListItemRepo() listItemRepo
+	UserRepo() userRepo
+}
 
-	db, err = sql.Open("mysql", config.FormatDSN())
+func (cnn connection) ListItemRepo() listItemRepo {
+	return listItemRepo{
+		db: cnn.db,
+	}
+}
 
-	return db, err
+func (cnn connection) UserRepo() userRepo {
+	return userRepo{
+		db: cnn.db,
+	}
+}
+
+func InitDB(cfg config.Config) (cnn CnnMask, err error) {
+	connection := connection{}
+
+	mysqlConfig := mysql.NewConfig()
+
+	mysqlConfig.Addr = cfg.Database.Address + "::" + cfg.Database.Port
+	mysqlConfig.DBName = cfg.Database.DBName
+	mysqlConfig.User = cfg.Database.User
+	mysqlConfig.Passwd = cfg.Database.Passwd
+
+	connection.db, err = sql.Open("mysql", mysqlConfig.FormatDSN())
+	if err != nil {
+		return connection, err
+	}
+
+	err = connection.db.Ping()
+
+	return connection, err
 }

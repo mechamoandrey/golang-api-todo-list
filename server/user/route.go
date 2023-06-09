@@ -1,16 +1,15 @@
 package server
 
 import (
-	"database/sql"
+	"todo-list-api/data"
 
 	"github.com/labstack/echo/v4"
 )
 
-func InitUserRoutes(e *echo.Echo, db *sql.DB) {
+func InitUserRoutes(e *echo.Echo, db data.CnnMask) {
 	controller := controller{
 		DB: db,
 	}
 
-	e.GET("/user/:user_id", controller.GetUser)
-	e.POST("/createUser", controller.CreateUserData)
+	e.POST("/registerUser", controller.HandleRegisterUser)
 }

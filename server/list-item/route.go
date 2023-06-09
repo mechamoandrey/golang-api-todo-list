@@ -1,17 +1,17 @@
 package server
 
 import (
-	"database/sql"
+	"todo-list-api/data"
 
 	"github.com/labstack/echo/v4"
 )
 
-func InitListItemRoutes(e *echo.Echo, db *sql.DB) {
+func InitListItemRoutes(e *echo.Echo, db data.CnnMask) {
 	controller := controller{
 		DB: db,
 	}
 
-	e.GET("/userList/:user_id", controller.GetUserList)
-
-	e.POST("/createItem/:user_id", controller.CreateUserItem)
+	e.GET("/userList/:user_id", controller.HandleGetUserList)
+	e.POST("/createItem/:user_id", controller.HandleCreateListItem)
+	e.DELETE("/deleteItem/:list_item_uuid", controller.HandleDeleteListItem)
 }

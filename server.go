@@ -4,31 +4,28 @@ import (
 	"log"
 	"net/http"
 	"todo-list-api/data"
+	"todo-list-api/infra/config"
 	serverList "todo-list-api/server/list-item"
 	serverUser "todo-list-api/server/user"
 
 	"github.com/labstack/echo/v4"
 )
 
-// type user struct {
-// 	Id       int
-// 	Name     string
-// 	userList []userListItem
-// }
-
 func main() {
-
-	var err error
+	config, err := config.GetConfig()
+	if err != nil {
+		log.Fatal("unable to read config", err)
+	}
 
 	e := echo.New()
 
-	db, err := data.InitDB()
+	cnn, err := data.InitDB(config)
 	if err != nil {
 		log.Fatal("unable to use db connection", err)
 	}
 
-	serverUser.InitUserRoutes(e, db)
-	serverList.InitListItemRoutes(e, db)
+	serverUser.InitUserRoutes(e, cnn)
+	serverList.InitListItemRoutes(e, cnn)
 
 	if err := e.Start(":8080"); err != http.ErrServerClosed {
 		log.Fatal(err)
