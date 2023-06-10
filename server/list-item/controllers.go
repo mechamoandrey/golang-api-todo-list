@@ -64,3 +64,21 @@ func (c controller) HandleDeleteListItem(ctx echo.Context) error {
 
 	return ctx.String(http.StatusOK, "Item Removido")
 }
+
+func (c controller) HandleUpdateListItem(ctx echo.Context) error {
+	uuid := ctx.Param("list_item_uuid")
+	requestBody := new(UpdateListItemRequest)
+	if err := ctx.Bind(requestBody); err != nil {
+		return err
+	}
+
+	name := requestBody.Name
+	description := requestBody.Description
+
+	err := c.DB.ListItemRepo().UpdateListItem(name, description, uuid)
+	if err != nil {
+		log.Fatal("Erro ao atualizar item no BD", err)
+	}
+
+	return ctx.String(http.StatusOK, "Item Alterado")
+}

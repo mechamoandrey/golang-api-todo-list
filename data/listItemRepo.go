@@ -53,3 +53,15 @@ func (r listItemRepo) DeleteListItem(uuid string) error {
 
 	return err
 }
+
+func (r listItemRepo) UpdateListItem(name string, description string, uuid string) error {
+	queryString := `
+	UPDATE list_item
+	SET name = ?, description = ?
+	WHERE list_item_uuid = ?
+	LIMIT 1;`
+
+	_, err := r.db.Query(queryString, name, description, uuid)
+
+	return err
+}
