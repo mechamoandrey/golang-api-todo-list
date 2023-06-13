@@ -2,13 +2,14 @@ package data
 
 import (
 	"database/sql"
+	"todo-list-api/entities"
 )
 
 type userRepo struct {
 	db *sql.DB
 }
 
-func (r userRepo) HandleRegisterUser(uuid string, name string, login string, passwd string) error {
+func (r userRepo) CreateUser(uuid string, name string, login string, passwd string) error {
 	queryString := `
 		INSERT INTO user (user_uuid, name, login, password)
 		VALUES (?, ?, ?, ?);
@@ -17,4 +18,16 @@ func (r userRepo) HandleRegisterUser(uuid string, name string, login string, pas
 	_, err := r.db.Query(queryString, uuid, name, login, passwd)
 
 	return err
+}
+
+func (r userRepo) GetUserByUUID(userUUID string) (user entities.User, err error) {
+	queryString := `
+		SELECT user_id, user_uuid, name, login, password
+		FROM user
+		WHERE user_uuid = ?;
+	`
+
+	err = r.db.QueryRow(queryString, userUUID).Scan(&user.UserId, &userUUID, &user.Name, &user.Login, &user.Password)
+
+	return user, err
 }

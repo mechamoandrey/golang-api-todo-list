@@ -11,5 +11,5 @@ func InitUserRoutes(e *echo.Echo, db data.CnnMask) {
 		DB: db,
 	}
 
-	e.POST("/registerUser", controller.HandleRegisterUser)
+	e.POST("/user/register", controller.HandleRegisterUser)
 }

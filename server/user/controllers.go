@@ -24,7 +24,7 @@ func (c controller) HandleRegisterUser(ctx echo.Context) error {
 	login := requestBody.Login
 	password := requestBody.Password
 
-	err := c.DB.UserRepo().HandleRegisterUser(uuid, name, login, password)
+	err := c.DB.UserRepo().CreateUser(uuid, name, login, password)
 	if err != nil {
 		log.Fatal("erro ao inserir o usuário no banco de dados: ", err)
 	}

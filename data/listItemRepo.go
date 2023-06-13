@@ -33,7 +33,7 @@ func (r listItemRepo) GetListItemByUserId(userUUID string) (userList []entities.
 	return userList, err
 }
 
-func (r listItemRepo) CreateListItem(userId int, listItemUUID string, name string, description string) (err error) {
+func (r listItemRepo) CreateListItem(userId int64, listItemUUID string, name string, description string) (err error) {
 	queryString := `
 	INSERT INTO list_item (user_id, list_item_uuid,  name, description)
 	VALUES (?, ?, ?, ?)`

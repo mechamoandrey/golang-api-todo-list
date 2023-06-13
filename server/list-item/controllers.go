@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"todo-list-api/data"
 
 	"github.com/google/uuid"
@@ -27,8 +26,12 @@ func (c controller) HandleGetUserList(ctx echo.Context) error {
 }
 
 func (c controller) HandleCreateListItem(ctx echo.Context) error {
-	idString := ctx.Param("user_id")
-	userId, _ := strconv.Atoi(idString)
+	userUUID := ctx.Param("user_uuid")
+
+	user, err := c.DB.UserRepo().GetUserByUUID(userUUID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Internal Server Error")
+	}
 
 	requestBody := new(CreateListItemRequest)
 	if err := ctx.Bind(requestBody); err != nil {
@@ -37,15 +40,15 @@ func (c controller) HandleCreateListItem(ctx echo.Context) error {
 
 	name := requestBody.Name
 	description := requestBody.Description
-	uuid := uuid.New().String()
+	listItemUUID := uuid.New().String()
 
-	err := c.DB.ListItemRepo().CreateListItem(userId, uuid, name, description)
+	err = c.DB.ListItemRepo().CreateListItem(user.UserId, listItemUUID, name, description)
 	if err != nil {
 		log.Fatal("erro ao inserir o item no banco de dados: ", err)
 	}
 
 	response := CreateListItemResponse{
-		ListItemUUID: uuid,
+		ListItemUUID: listItemUUID,
 		Name:         name,
 		Description:  description,
 	}
