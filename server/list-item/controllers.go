@@ -16,10 +16,9 @@ type controller struct {
 
 func (c controller) HandleGetUserList(ctx echo.Context) error {
 
-	idString := ctx.Param("user_id")
-	id, _ := strconv.Atoi(idString)
+	userUUID := ctx.Param("user_uuid")
 
-	userList, err := c.DB.ListItemRepo().GetListItemByUserId(id)
+	userList, err := c.DB.ListItemRepo().GetListItemByUserId(userUUID)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, "Deu pau")
 	}

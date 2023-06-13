@@ -10,14 +10,15 @@ type listItemRepo struct {
 	db *sql.DB
 }
 
-func (r listItemRepo) GetListItemByUserId(userId int) (userList []entities.ListItem, err error) {
+func (r listItemRepo) GetListItemByUserId(userUUID string) (userList []entities.ListItem, err error) {
 	queryString := `
-		SELECT list_item_id, name, description
-		FROM list_item
-		WHERE user_id = ?;
+		SELECT list_item_id, li.name, li.description
+		FROM list_item li
+		JOIN user u ON u.user_id = li.user_id
+		WHERE u.user_uuid = ? ;
 	`
 
-	rows, err := r.db.Query(queryString, userId)
+	rows, err := r.db.Query(queryString, userUUID)
 	if err != nil {
 		log.Fatal("erro", err)
 	}
