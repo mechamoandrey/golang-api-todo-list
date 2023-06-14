@@ -31,3 +31,15 @@ func (r userRepo) GetUserByUUID(userUUID string) (user entities.User, err error)
 
 	return user, err
 }
+
+func (r userRepo) GetUserByLogin(login string) (user entities.User, err error) {
+	queryString := `
+		SELECT user_uuid, name, password
+		FROM user
+		WHERE login = ?;
+	`
+
+	err = r.db.QueryRow(queryString, login).Scan(&user.UserUUID, &user.Name, &user.Password)
+
+	return user, err
+}

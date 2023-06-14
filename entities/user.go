@@ -5,5 +5,5 @@ type User struct {
 	UserUUID string
 	Name     string
 	Login    string
-	Password string
+	Password []byte
 }
